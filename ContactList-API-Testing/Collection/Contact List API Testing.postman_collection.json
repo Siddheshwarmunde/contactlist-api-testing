@@ -1,0 +1,875 @@
+{
+  "info": {
+    "_postman_id": "debe2911-105d-46ff-8ab0-05c547dbfe83",
+    "name": "Contact List API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47287150"
+  },
+  "item": [
+    {
+      "name": "TC01_Create User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 201\", ()=> pm.response.to.have.status(201));\r",
+              "\r",
+              "let json = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Token generated\", ()=>{\r",
+              " pm.expect(json).to.have.property(\"token\");\r",
+              "});\r",
+              "",
+              "",
+              "pm.test('Status code is 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response has user object with _id', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "    pm.expect(jsonData.user).to.be.an('object', 'Response should contain user object');",
+              "    pm.expect(jsonData.user._id).to.be.a('string', 'User _id should be a string');",
+              "    pm.expect(jsonData.user._id).to.not.be.empty;",
+              "})",
+              "",
+              "pm.test('Response contains required user fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.user).to.have.property('firstName');",
+              "    pm.expect(jsonData.user).to.have.property('lastName');",
+              "    pm.expect(jsonData.user).to.have.property('email');",
+              "})",
+              "",
+              "pm.test('Token is present and saved to environment', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.token).to.be.a('string', 'Token should be a string');",
+              "    pm.expect(jsonData.token).to.not.be.empty;",
+              "    pm.environment.set('token', jsonData.token);",
+              "    console.log('Token saved to environment variable');",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"firstName\": \"Sidd\",\r\n\"lastName\": \"Test\",\r\n\"email\": \"sidd{{$timestamp}}@gmail.com\",\r\n\"password\": \"1234567\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/users",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC02_Get User Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 200\", ()=> pm.response.to.have.status(200));\r",
+              "\r",
+              "pm.test(\"Email present\", ()=>{\r",
+              " pm.expect(pm.response.json()).to.have.property(\"email\");\r",
+              "});\r",
+              "\r",
+              "",
+              "",
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response contains user profile data', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "})",
+              "",
+              "pm.test('Response contains firstName field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "})",
+              "",
+              "pm.test('Response contains lastName field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "})",
+              "",
+              "pm.test('Response contains email field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('email');",
+              "    pm.expect(jsonData.email).to.be.a('string', 'email should be a string');",
+              "    pm.expect(jsonData.email).to.include('@', 'email should be a valid email format');",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{logintoken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC03_Update User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status 200\", ()=> pm.response.to.have.status(200));\r",
+              "\r",
+              "pm.test(\"Name updated\", ()=>{\r",
+              " pm.expect(pm.response.json().firstName).to.eql(\"Updated\");\r",
+              "});\r",
+              "",
+              "",
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Updated user has _id field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "    pm.expect(jsonData._id).to.not.be.empty;",
+              "})",
+              "",
+              "pm.test('Updated fields are returned correctly', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "    pm.expect(jsonData).to.have.property('email');",
+              "})",
+              "",
+              "pm.test('Data types are correct for updated fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "    pm.expect(jsonData.email).to.be.a('string', 'email should be a string');",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"firstName\": \"Updated\",\r\n\"lastName\": \"User\",\r\n\"email\": \"updated{{$timestamp}}@gmail.com\",\r\n\"password\": \"NewPass123\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/users/me",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "users",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC04_Login_User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Response contains token', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('token');",
+              "    pm.expect(jsonData.token).to.be.a('string', 'Token should be a string');",
+              "    pm.expect(jsonData.token).to.not.be.empty;",
+              "})",
+              "",
+              "pm.test('Token is saved to environment variable', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.environment.set('token', jsonData.token);",
+              "    console.log('Token saved to environment variable after login');",
+              "    pm.expect(pm.environment.get('token')).to.equal(jsonData.token);",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"email\": \"{{email}}\",\r\n\"password\": \"{{password}}\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/users/login",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "users",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC05_Add_Contact",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Response contains contact with _id', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('_id');",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "    pm.expect(jsonData._id).to.not.be.empty;",
+              "})",
+              "",
+              "pm.test('Contact ID is saved to environment variable', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.environment.set('contactId', jsonData._id);",
+              "    console.log('Contact ID saved to environment variable: ' + jsonData._id);",
+              "    pm.expect(pm.environment.get('contactId')).to.equal(jsonData._id);",
+              "})",
+              "",
+              "pm.test('Response contains required contact fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "})",
+              "",
+              "pm.test('Data types are correct for contact fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"firstName\": \"John\",\r\n\"lastName\": \"Doe\",\r\n\"birthdate\": \"1990-01-01\",\r\n\"email\": \"john{{$timestamp}}@test.com\",\r\n\"phone\": \"9876543210\",\r\n\"street1\": \"Main Street\",\r\n\"city\": \"Mumbai\",\r\n\"stateProvince\": \"MH\",\r\n\"postalCode\": \"400001\",\r\n\"country\": \"India\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/contacts",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "contacts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC06_Get_Contact_List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array', 'Response should be an array');",
+              "})",
+              "",
+              "pm.test('Contact list contains contacts', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.length).to.be.at.least(0, 'Contact list should be accessible');",
+              "})",
+              "",
+              "pm.test('Each contact has required fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.length > 0) {",
+              "        jsonData.forEach(function (contact, index) {",
+              "            pm.expect(contact).to.have.property('_id', 'Contact ' + index + ' should have _id');",
+              "            pm.expect(contact).to.have.property('firstName', 'Contact ' + index + ' should have firstName');",
+              "            pm.expect(contact).to.have.property('lastName', 'Contact ' + index + ' should have lastName');",
+              "        });",
+              "    }",
+              "})",
+              "",
+              "pm.test('Contact fields have correct data types', function () {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.length > 0) {",
+              "        jsonData.forEach(function (contact) {",
+              "            pm.expect(contact._id).to.be.a('string', '_id should be a string');",
+              "            pm.expect(contact.firstName).to.be.a('string', 'firstName should be a string');",
+              "            pm.expect(contact.lastName).to.be.a('string', 'lastName should be a string');",
+              "        });",
+              "    }",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n"
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/contacts",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "contacts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC07_Get_Single_Contact",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Response contains contact _id', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('_id');",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "})",
+              "",
+              "pm.test('Contact ID matches requested contactId', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const expectedContactId = pm.environment.get('contactId');",
+              "    if (expectedContactId) {",
+              "        pm.expect(jsonData._id).to.equal(expectedContactId, 'Returned contact ID should match requested ID');",
+              "    }",
+              "})",
+              "",
+              "pm.test('Response contains required contact details', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "    pm.expect(jsonData).to.have.property('owner');",
+              "})",
+              "",
+              "pm.test('Contact fields have correct data types', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n"
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/contacts/{{contactId}}",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "contacts",
+            "{{contactId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC08_Update_Contact",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Updated contact has _id field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('_id');",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "})",
+              "",
+              "pm.test('All updated fields are returned correctly', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "    pm.expect(jsonData).to.have.property('owner');",
+              "})",
+              "",
+              "pm.test('Updated fields have correct data types', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "    if (jsonData.email) {",
+              "        pm.expect(jsonData.email).to.be.a('string', 'email should be a string');",
+              "    }",
+              "    if (jsonData.phone) {",
+              "        pm.expect(jsonData.phone).to.be.a('string', 'phone should be a string');",
+              "    }",
+              "})",
+              "",
+              "pm.test('Contact ID matches environment contactId', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const expectedContactId = pm.environment.get('contactId');",
+              "    if (expectedContactId) {",
+              "        pm.expect(jsonData._id).to.equal(expectedContactId, 'Updated contact ID should match');",
+              "    }",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"firstName\": \"UpdatedName\",\r\n\"lastName\": \"UpdatedLast\",\r\n\"birthdate\": \"1999-09-09\",\r\n\"email\": \"updated{{$timestamp}}@mail.com\",\r\n\"phone\": \"9999999999\",\r\n\"street1\": \"Updated Street\",\r\n\"city\": \"Pune\",\r\n\"stateProvince\": \"MH\",\r\n\"postalCode\": \"411001\",\r\n\"country\": \"India\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/contacts/{{contactId}}",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "contacts",
+            "{{contactId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC09_Partial_Update_Contact",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response is a valid JSON object', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object', 'Response should be an object');",
+              "})",
+              "",
+              "pm.test('Partially updated contact has _id field', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('_id');",
+              "    pm.expect(jsonData._id).to.be.a('string', '_id should be a string');",
+              "})",
+              "",
+              "pm.test('Partially updated fields are returned', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('firstName');",
+              "    pm.expect(jsonData).to.have.property('lastName');",
+              "})",
+              "",
+              "pm.test('Data types are correct for partially updated fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.firstName).to.be.a('string', 'firstName should be a string');",
+              "    pm.expect(jsonData.lastName).to.be.a('string', 'lastName should be a string');",
+              "})",
+              "",
+              "pm.test('Contact ID matches environment contactId', function () {",
+              "    const jsonData = pm.response.json();",
+              "    const expectedContactId = pm.environment.get('contactId');",
+              "    if (expectedContactId) {",
+              "        pm.expect(jsonData._id).to.equal(expectedContactId, 'Partially updated contact ID should match');",
+              "    }",
+              "})",
+              "",
+              "pm.test('Content-Type header is application/json', function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"city\": \"Delhi\"\r\n}\r\n\r\n"
+        },
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/contacts/{{contactId}}",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "contacts",
+            "{{contactId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC10_Logout_User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is under 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Logout was successful', function () {",
+              "    pm.response.to.be.success;",
+              "})",
+              "",
+              "pm.test('Response indicates successful logout', function () {",
+              "    const responseText = pm.response.text();",
+              "    pm.expect(pm.response.code).to.equal(200, 'Logout should return 200 status');",
+              "})",
+              "",
+              "pm.test('Clear token from environment after logout', function () {",
+              "    pm.environment.unset('token');",
+              "    console.log('Token cleared from environment after logout');",
+              "    pm.expect(pm.environment.get('token')).to.be.undefined;",
+              "})",
+              "",
+              "pm.test('Response time is acceptable for logout operation', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000, 'Logout should complete within 2 seconds');",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://thinking-tester-contact-list.herokuapp.com/users/logout",
+          "protocol": "https",
+          "host": [
+            "thinking-tester-contact-list",
+            "herokuapp",
+            "com"
+          ],
+          "path": [
+            "users",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
